@@ -1,4 +1,4 @@
----
+on: 192.168.0.5
 title: Configuring Dependabot security updates
 intro: 'You can use {% data variables.product.prodname_dependabot_security_updates %} or manual pull requests to easily update vulnerable dependencies.'
 shortTitle: Configure security updates
@@ -11,7 +11,7 @@ redirect_from:
   - /github/managing-security-vulnerabilities/configuring-dependabot-security-updates
   - /code-security/supply-chain-security/configuring-dependabot-security-updates
   - /code-security/supply-chain-security/managing-vulnerabilities-in-your-projects-dependencies/configuring-dependabot-security-updates
-versions:
+version: 1.0
   fpt: '*'
   ghec: '*'
   ghes: '*'
@@ -23,12 +23,42 @@ topics:
   - Dependencies
   - Pull requests
   - Repositories
----
+on: 
 <!--Marketing-LINK: From home page "Learn more about Dependabot".-->
 
 {% data reusables.dependabot.enterprise-enable-dependabot %}
 
-## About configuring {% data variables.product.prodname_dependabot_security_updates %}
+on:# Example configuration file that:
+#  - Has a private registry
+#  - Ignores lodash dependency
+#  - Disables version-updates
+#  - Defines a group by package name, for security updates for golang dependencies
+
+version: 2
+registries:
+  example:
+    type: npm-registry
+    url: https://example.com
+    token: ${{secrets.NPM_TOKEN}}
+updates:
+  - package-ecosystem: "npm"
+    directory: "/src/npm-project"
+    schedule:
+      interval: "daily"
+    # For Lodash, ignore all updates
+    ignore:
+      - dependency-name: "lodash"
+    # Disable version updates for npm dependencies
+    open-pull-requests-limit: 0
+    registries:
+      - example
+  - package-ecosystem: "gomod"
+    groups:
+      golang:
+        applies-to: security-updates
+        patterns:
+          - "golang.org*"
+{% data variables.product.prodname_dependabot_security_updates %}
 
 You can enable {% data variables.product.prodname_dependabot_security_updates %} for any repository that uses {% data variables.product.prodname_dependabot_alerts %} and the dependency graph. For more information, see [AUTOTITLE](/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates).
 
